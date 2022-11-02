@@ -1,0 +1,2 @@
+# Disclaimer
+This project uses the single-header libraries [Nuklear](https://github.com/Immediate-Mode-UI/Nuklear.git) and [stb_image](https://github.com/nothings/stb.git) along with the [TinyFileDialogs](https://sourceforge.net/projects/tinyfiledialogs/) library, therefore the credits and wrights to the respective part of the code which belong to their works (those being, the files included in the `lib/` directory and the file `tinyfiledialogs.c` in the `src/` directory) are given to their creators.
