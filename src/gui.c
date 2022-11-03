@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 #include <GL/glew.h>
-#include <string.h>
 
 #include "../lib/nuklear.h"
 #include "../lib/tinyfiledialogs.h"
@@ -11,26 +11,26 @@
 #include "../lib/stb_image.h"
 
 #include "gui.h"
+#include "files.h"
 
 #define BUFFER_LENGHT 256
 
 struct images {
-	struct nk_image open_folder;
+	struct nk_image openfolder;
 	struct nk_image confirm;
 };
 struct images icons;
 
-
-static char field_buffer[BUFFER_LENGHT];
+static char fieldbuffer[BUFFER_LENGHT];
 
 static struct nk_image
-load_image(char *filepath)
+loadimage(char *filepath)
 {
 	int x, y, n;
 	GLuint tex;
 	unsigned char *data = stbi_load(filepath, &x, &y, &n, 0);
 	if (!data) {
-		fprintf(stderr, "Failed to load image: %s", filepath);
+		fprintf(stderr, "Failed to load image: %s\n", filepath);
 		exit(1);
 	}
 
@@ -47,14 +47,14 @@ load_image(char *filepath)
 }
 
 void
-init_icons(void)
+initicons(void)
 {
-	icons.open_folder = load_image("assets/open_folder.png");
-	icons.confirm = load_image("assets/confirm.png");
+	icons.openfolder = loadimage("assets/open_folder.png");
+	icons.confirm = loadimage("assets/confirm.png");
 }
 
 void
-init_fps(struct nk_context *ctx, int ww, int wh)
+initfps(struct nk_context *ctx, int ww, int wh)
 {
 	if (nk_begin(ctx, "fpsR", nk_rect(0, 0, ww, wh), NK_WINDOW_BORDER)) {
 		nk_layout_row_dynamic(ctx, 120, 1);
@@ -64,11 +64,11 @@ init_fps(struct nk_context *ctx, int ww, int wh)
 }
 
 int
-init_folder_selector(struct nk_context *ctx, int ww, int wh)
+initfolderselector(struct nk_context *ctx, int ww, int wh)
 {
-	static char *folder_path;
-	static int  path_len;
-	static int  field_len;
+	static char *folderpath;
+	static int   pathlen;
+	static int   fieldlen;
 
 	if (nk_begin(ctx, "Input folder path: ", nk_rect(0, 0, ww, wh), NK_WINDOW_BORDER|NK_WINDOW_TITLE)) {
 		/* row for nk_edit_string and the button with the folder icon */
@@ -78,15 +78,15 @@ init_folder_selector(struct nk_context *ctx, int ww, int wh)
 		nk_layout_row_push(ctx, (ww / 3.0));
 		nk_spacing(ctx, 1);
 		nk_layout_row_push(ctx, 170);
-		nk_edit_string(ctx, NK_EDIT_FIELD, field_buffer, &field_len, BUFFER_LENGHT, nk_filter_default);
+		nk_edit_string(ctx, NK_EDIT_FIELD, fieldbuffer, &fieldlen, BUFFER_LENGHT, nk_filter_default);
 		nk_layout_row_push(ctx, 30);
 		nk_spacing(ctx, 1);
 		nk_layout_row_push(ctx, 50);
-		if (nk_button_image(ctx, icons.open_folder)) {
-		    folder_path = tinyfd_selectFolderDialog("Select a folder", ".");
-		    path_len = strlen(folder_path);
-		    memcpy(field_buffer, folder_path, path_len);
-		    field_len += path_len;
+		if (nk_button_image(ctx, icons.openfolder)) {
+		    folderpath = tinyfd_selectFolderDialog("Select a folder", ".");
+		    pathlen = strlen(folderpath);
+		    memcpy(fieldbuffer, folderpath, pathlen);
+		    fieldlen += pathlen;
 		}
 		nk_layout_row_end(ctx);
 		/* spacing */
@@ -98,12 +98,11 @@ init_folder_selector(struct nk_context *ctx, int ww, int wh)
 		nk_layout_row_push(ctx, 50);
 		if (nk_button_image(ctx, icons.confirm)) {
 			nk_end(ctx);
+			resolvepath(fieldbuffer, 0, &arg);
 			return FOLDER_SELECTED;
 		}
 		nk_layout_row_end(ctx);
 	}
-	printf("field_buffer: %s\n", field_buffer);
-	printf("field_len: %d\n", field_len);
 	nk_end(ctx);
 	return FOLDER_NOT_SELECTED;
 }

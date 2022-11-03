@@ -27,12 +27,15 @@
 
 /* Headers of project */
 #include "gui.h"
+#include "files.h"
 
 #define MAX_VERTEX_BUFFER 512 * 1024
 #define MAX_ELEMENT_BUFFER 128 * 1024
 
+struct Arguments arg;
+
 void
-error_callback(int error, const char* description)
+errorcallback(int error, const char* description)
 {
 	fprintf(stderr, "[GLFW] Error: \n %d: %s\n", error, description);
 }
@@ -40,7 +43,7 @@ error_callback(int error, const char* description)
 int
 main(void)
 {
-	int                       folder_selected;
+	int                       folderselected;
 	/* GLFW */
 	struct nk_glfw            glfw = {0};
 	static GLFWwindow        *win;
@@ -54,7 +57,7 @@ main(void)
 	/* OpenGl init */
 	width = 0;
 	height = 0;
-	glfwSetErrorCallback(error_callback);
+	glfwSetErrorCallback(errorcallback);
 	if (!glfwInit()) {
 		fprintf(stderr, "[GLFW] Failed to init!\n");
 		exit(1);
@@ -77,17 +80,18 @@ main(void)
 	struct nk_font *dejavu = nk_font_atlas_add_from_file(atlas, "assets/DejaVuSansMonoNerdFontComplete.ttf", 14, 0);
 	nk_glfw3_font_stash_end(&glfw);
 	nk_style_set_font(ctx, &dejavu->handle);
-	init_icons();
+	initicons();
 
-	folder_selected = FOLDER_NOT_SELECTED;
+	folderselected = FOLDER_NOT_SELECTED;
+	initarguments(&arg, 10);
 	while (!glfwWindowShouldClose(win)) {
 		glfwPollEvents();
 		nk_glfw3_new_frame(&glfw);
 
-		if (folder_selected == FOLDER_NOT_SELECTED) {
-			folder_selected = init_folder_selector(ctx, width, height);
+		if (folderselected == FOLDER_NOT_SELECTED) {
+			folderselected = initfolderselector(ctx, width, height);
 		} else {
-			init_fps(ctx, width, height);
+			initfps(ctx, width, height);
 		}
 
 		/* Redraw buffer */
@@ -97,4 +101,6 @@ main(void)
 		nk_glfw3_render(&glfw, NK_ANTI_ALIASING_ON, MAX_VERTEX_BUFFER, MAX_ELEMENT_BUFFER);
 		glfwSwapBuffers(win);
 	}
+	glfwTerminate();
+	freearguments(&arg);
 }
