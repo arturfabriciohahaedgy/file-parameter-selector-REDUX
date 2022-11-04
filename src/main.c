@@ -82,8 +82,8 @@ main(void)
 	nk_style_set_font(ctx, &dejavu->handle);
 	initicons();
 
+	arg.used = 0;
 	folderselected = FOLDER_NOT_SELECTED;
-	initarguments(&arg, 10);
 	while (!glfwWindowShouldClose(win)) {
 		glfwPollEvents();
 		nk_glfw3_new_frame(&glfw);
@@ -103,4 +103,5 @@ main(void)
 	}
 	glfwTerminate();
 	freearguments(&arg);
+	return 0;
 }

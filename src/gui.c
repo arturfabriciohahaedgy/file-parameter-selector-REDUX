@@ -98,7 +98,7 @@ initfolderselector(struct nk_context *ctx, int ww, int wh)
 		nk_layout_row_push(ctx, 50);
 		if (nk_button_image(ctx, icons.confirm)) {
 			nk_end(ctx);
-			resolvepath(fieldbuffer, 0, &arg);
+			returndirs(fieldbuffer, 0, &arg);
 			return FOLDER_SELECTED;
 		}
 		nk_layout_row_end(ctx);

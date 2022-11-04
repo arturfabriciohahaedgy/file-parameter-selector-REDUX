@@ -2,16 +2,14 @@
 
 #define LEVEL 0
 #define NOTLEVEL 99
+#define DIR_ARRAY_SIZE 256
 
 struct Arguments {
-    char   **array;
-    size_t   used;
-    size_t   size;
-}; /* struct used for dynamic array of filenames */
+	int   used;
+	char *array[DIR_ARRAY_SIZE];
+};
 
-void initarguments(struct Arguments*, size_t);
-void freearguments(struct Arguments*);
-
-void resolvepath(const char*, int, struct Arguments*);
+void returndirs(const char*, int, struct Arguments *arg);
+void freearguments(struct Arguments *arg);
 
 extern struct Arguments arg;
