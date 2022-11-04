@@ -2,5 +2,7 @@ CFLAGS = -g -std=c99 -Wall -Wextra -pedantic -Wno-misleading-indentation -Wno-sh
 LIBS = `pkg-config --libs glfw3 glew` -lm
 SRC = src/main.c src/gui.c src/tinyfiledialogs.c src/files.c
 
+all: fpsR
+
 fpsR: ${SRC}
 	${CC} ${CFLAGS} ${SRC} -o fpsR ${LIBS}
