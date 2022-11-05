@@ -97,7 +97,6 @@ addargument(struct Arguments *arg, char *value)
 	strcpy(insertedvalue, value);
 	arg->array[arg->used] = insertedvalue;
 	arg->used++;
-	printarguments(arg);
 }
 
 void

@@ -43,7 +43,7 @@ errorcallback(int error, const char* description)
 int
 main(void)
 {
-	int                       folderselected;
+	/*int                       folderselected;*/
 	/* GLFW */
 	struct nk_glfw            glfw = {0};
 	static GLFWwindow        *win;
@@ -83,16 +83,16 @@ main(void)
 	initicons();
 
 	arg.used = 0;
-	folderselected = FOLDER_NOT_SELECTED;
+	/*folderselected = FOLDER_NOT_SELECTED;*/
 	while (!glfwWindowShouldClose(win)) {
 		glfwPollEvents();
 		nk_glfw3_new_frame(&glfw);
 
-		if (folderselected == FOLDER_NOT_SELECTED) {
+		/*if (folderselected == FOLDER_NOT_SELECTED) {
 			folderselected = initfolderselector(ctx, width, height);
-		} else {
+		} else {*/
 			initfps(ctx, width, height);
-		}
+		/*}*/
 
 		/* Redraw buffer */
 		glfwGetWindowSize(win, &width, &height);

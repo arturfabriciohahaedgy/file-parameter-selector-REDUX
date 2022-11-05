@@ -18,10 +18,9 @@
 struct images {
 	struct nk_image openfolder;
 	struct nk_image confirm;
+	struct nk_image error;
 };
 struct images icons;
-
-static char fieldbuffer[BUFFER_LENGHT];
 
 static struct nk_image
 loadimage(char *filepath)
@@ -50,15 +49,38 @@ void
 initicons(void)
 {
 	icons.openfolder = loadimage("assets/open_folder.png");
-	icons.confirm = loadimage("assets/confirm.png");
+	icons.confirm =    loadimage("assets/confirm.png");
+	icons.error =      loadimage("assets/error.png");
+}
+
+void
+/* errorpopup(char *message) */
+errorpopup(struct nk_context *ctx)
+{
+	int w = 300, h = 300;
+	struct nk_rect s = {0, 0, w, h};
+	if (nk_popup_begin(ctx, NK_POPUP_STATIC, "Error!", NK_WINDOW_CLOSABLE|NK_WINDOW_SCALABLE|NK_WINDOW_MOVABLE, s)) {
+		nk_layout_row_begin(ctx, NK_STATIC, 0, 2);
+		nk_layout_row_push(ctx, 50);
+		nk_image(ctx, icons.error);
+		nk_layout_row_end(ctx);
+		nk_popup_end(ctx);
+	}
 }
 
 void
 initfps(struct nk_context *ctx, int ww, int wh)
 {
 	if (nk_begin(ctx, "fpsR", nk_rect(0, 0, ww, wh), NK_WINDOW_BORDER)) {
-		nk_layout_row_dynamic(ctx, 120, 1);
-		nk_label(ctx, "Hello world!", NK_TEXT_CENTERED);
+		/* nk_layout_row_static(ctx, (wh - 25), (ww -25), 1); */
+		nk_layout_row_begin(ctx, NK_STATIC, 0, 2);
+		nk_layout_row_push(ctx, ((ww - 27) / 2.0));
+		nk_label(ctx, "aaaa", NK_TEXT_CENTERED);
+		nk_layout_row_push(ctx, ((ww - 27) / 2.0));
+		nk_label(ctx, "Command: ", NK_TEXT_LEFT);
+		if (nk_button_label(ctx, "Click here!"))
+			errorpopup(ctx);
+		nk_layout_row_end(ctx);
 	}
 	nk_end(ctx);
 }
@@ -69,6 +91,7 @@ initfolderselector(struct nk_context *ctx, int ww, int wh)
 	static char *folderpath;
 	static int   pathlen;
 	static int   fieldlen;
+	static char  fieldbuffer[BUFFER_LENGHT];
 
 	if (nk_begin(ctx, "Input folder path: ", nk_rect(0, 0, ww, wh), NK_WINDOW_BORDER|NK_WINDOW_TITLE)) {
 		/* row for nk_edit_string and the button with the folder icon */
@@ -78,15 +101,17 @@ initfolderselector(struct nk_context *ctx, int ww, int wh)
 		nk_layout_row_push(ctx, (ww / 3.0));
 		nk_spacing(ctx, 1);
 		nk_layout_row_push(ctx, 170);
-		nk_edit_string(ctx, NK_EDIT_FIELD, fieldbuffer, &fieldlen, BUFFER_LENGHT, nk_filter_default);
+		nk_edit_string(ctx, NK_EDIT_SIMPLE, fieldbuffer, &fieldlen, BUFFER_LENGHT, nk_filter_default);
 		nk_layout_row_push(ctx, 30);
 		nk_spacing(ctx, 1);
 		nk_layout_row_push(ctx, 50);
 		if (nk_button_image(ctx, icons.openfolder)) {
 		    folderpath = tinyfd_selectFolderDialog("Select a folder", ".");
-		    pathlen = strlen(folderpath);
-		    memcpy(fieldbuffer, folderpath, pathlen);
-		    fieldlen += pathlen;
+		    if (folderpath) {
+				pathlen = strlen(folderpath);
+				memcpy(fieldbuffer, folderpath, pathlen);
+				fieldlen += pathlen;
+		    }
 		}
 		nk_layout_row_end(ctx);
 		/* spacing */
