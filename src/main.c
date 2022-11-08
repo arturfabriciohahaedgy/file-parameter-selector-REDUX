@@ -77,7 +77,7 @@ main(void)
 	/* nuklear context and font */
 	ctx = nk_glfw3_init(&glfw, win, NK_GLFW3_INSTALL_CALLBACKS);
 	nk_glfw3_font_stash_begin(&glfw, &atlas);
-	struct nk_font *dejavu = nk_font_atlas_add_from_file(atlas, "assets/DejaVuSansMonoNerdFontComplete.ttf", 14, 0);
+	struct nk_font *dejavu = nk_font_atlas_add_from_file(atlas, "assets/DejaVuSansMonoNerdFontComplete.ttf", 16, 0);
 	nk_glfw3_font_stash_end(&glfw);
 	nk_style_set_font(ctx, &dejavu->handle);
 	initicons();
