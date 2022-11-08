@@ -20,7 +20,7 @@ This project uses the single-header libraries [Nuklear](https://github.com/Immed
 ## Source of assets
 
 - "Deja Vu Sans Mono" font: https://www.nerdfonts.com/font-downloads
-- "Add" icon: https://www.freeiconspng.com/images/add-icon-png
+- "Add" icon: https://www.stockio.com/free-clipart/add-2
 - "Open folder" icon: https://www.iconninja.com/file-open-folder-icon-895775
 - "Confirm" icon: https://meta.m.wikimedia.org/wiki/File:Symbol_OK.svg
 - "Error" icon: https://www.flaticon.com/free-icon/close_845648
