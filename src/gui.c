@@ -82,11 +82,6 @@ errorpopup(struct nk_context *ctx)
 }
 
 void
-createselector()
-{
-}
-
-void
 initfps(struct nk_context *ctx, int ww, int wh)
 {
 	/* main command */
@@ -97,8 +92,10 @@ initfps(struct nk_context *ctx, int ww, int wh)
 	static int selectedparam[BUFFER_LENGHT];
 	static char parambuffer[BUFFER_LENGHT];
 	static int usedparam = 0;
+	static int parampos;
 	/* final command */
-	static char finalbuffer[FINAL_COMMAND];
+ 	static char finalbuffer[FINAL_COMMAND];
+ 	static char finalcommand[FINAL_COMMAND];
 	static int finallen;
 
 	/* rect for popups */
@@ -116,19 +113,21 @@ initfps(struct nk_context *ctx, int ww, int wh)
 		else
 			nk_label(ctx, "Command: ", NK_TEXT_LEFT);
 		nk_layout_row_static(ctx, 10, 0, 0);
-		nk_layout_row_begin(ctx, NK_STATIC, 0, 2);
+ 		nk_layout_row_begin(ctx, NK_STATIC, 0, 2);
 		nk_layout_row_push(ctx, (whalf / 2));
 		nk_spacing(ctx, 1);
-		nk_layout_row_push(ctx, 130);
+		nk_layout_row_push(ctx, ((whalf / 2) - 10));
 		if (nk_button_text(ctx, "Change command", 14)) {
 			commandinserted = nk_false;
 			insertcommand = nk_true;
 		}
 		nk_layout_row_end(ctx);
 		nk_layout_row_static(ctx, 10, 0, 0);
-		nk_layout_row_begin(ctx, NK_STATIC, 0, 2);
+		nk_layout_row_begin(ctx, NK_STATIC, 0, 3);
 		nk_layout_row_push(ctx, (whalf / 2));
 		nk_label(ctx, "Add parameter:", NK_TEXT_LEFT);
+		nk_layout_row_push(ctx, ((whalf / 2) - 40));
+ 		nk_spacing(ctx, 1);
 		nk_layout_row_push(ctx, 25);
 		if (nk_button_text(ctx, "+", 1)) {
 			paramlen = 0;
@@ -137,14 +136,33 @@ initfps(struct nk_context *ctx, int ww, int wh)
 		}
 		nk_layout_row_end(ctx);
 		nk_layout_row_dynamic(ctx, 200,  1);
-		if (nk_group_begin(ctx, "Parameters", NK_WINDOW_TITLE)) {
+		if (nk_group_begin(ctx, "Parameters", NK_WINDOW_TITLE|NK_WINDOW_BORDER)) {
 			nk_layout_row_dynamic(ctx, 0,  1);
 			for (int i = 0; i < usedparam; i++) {
 				nk_checkbox_label(ctx, parameters[i], &selectedparam[i]);
 			}
 			nk_group_end(ctx);
 		}
-		nk_layout_row_dynamic(ctx, 0,  1);
+		nk_layout_row_static(ctx, 10, 0, 0);
+ 		nk_layout_row_begin(ctx, NK_STATIC, 0, 2);
+		nk_layout_row_push(ctx, (whalf / 2));
+		nk_checkbox_label(ctx, "After files", &parampos);
+		nk_layout_row_push(ctx, ((whalf / 2) - 40));
+		if (nk_button_text(ctx, "Generate command", 16)) {
+ 			memset(finalbuffer, 0, strlen(finalbuffer));
+			memset(finalcommand, 0, strlen(finalcommand));
+			strcpy(finalcommand, maincommand);
+			for (int i = 0; i < usedparam; i++) {
+				if (!(selectedparam[i])) {
+					strncat(finalcommand, " ", 2);
+					strcat(finalcommand, parameters[i]);
+				}
+			}
+			strcpy(finalbuffer, finalcommand);
+   			finallen = strlen(finalbuffer);
+		}
+		nk_layout_row_end(ctx);
+ 		nk_layout_row_dynamic(ctx, 200,  1);
                 	nk_edit_string(ctx, NK_EDIT_BOX, finalbuffer, &finallen, 1024, nk_filter_default);
 		/* "change command" popup */
 		if (insertcommand) {
